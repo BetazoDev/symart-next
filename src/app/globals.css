@@ -2,25 +2,147 @@
 
 :root {
   --background: #ffffff;
-  --foreground: #171717;
+  --foreground: #121212;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  --font-sans: var(--font-public);
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: #ffffff;
+  color: #121212;
+  font-family: var(--font-public), "Public Sans", sans-serif;
+}
+
+::selection {
+  background: #ff0000;
+  color: #ffffff;
+}
+
+@keyframes rise {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.rise {
+  animation: rise 1.4s cubic-bezier(0.25, 1, 0.5, 1) both;
+}
+
+.reveal {
+  opacity: 0;
+  transition: opacity 1.4s cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+.reveal.is-in {
+  opacity: 1;
+}
+
+@keyframes hero-photo {
+  from { opacity: 0.001; }
+  to { opacity: 1; }
+}
+
+.hero-photo {
+  animation: hero-photo 2s cubic-bezier(0.4, 0, 0.2, 1) both;
+}
+
+@keyframes hero-line {
+  from { transform: translateY(60px) rotate(4deg); }
+  to { transform: none; }
+}
+
+.hero-line {
+  display: block;
+  animation: hero-line 2s cubic-bezier(0.16, 1, 0.3, 1) 0.5s both;
+}
+
+@keyframes hero-fade {
+  from { opacity: 0.001; }
+  to { opacity: 1; }
+}
+
+.hero-fade {
+  animation: hero-fade 1.4s cubic-bezier(0.25, 1, 0.5, 1) 0.8s both;
+}
+
+.line-draw {
+  transform: scaleX(0);
+  transform-origin: left center;
+  transition: transform 1.4s cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+.scroll-line.is-in .line-draw {
+  transform: scaleX(1);
+}
+
+@keyframes ring {
+  0% { transform: scale(0.75); opacity: 0.7; }
+  100% { transform: scale(1.7); opacity: 0; }
+}
+
+.hotspot::before {
+  content: "";
+  position: absolute;
+  inset: -4px;
+  border-radius: 999px;
+  border: 1.5px solid white;
+  animation: ring 1.8s ease-out infinite;
+}
+
+@keyframes pop {
+  from { opacity: 0; transform: translate(10px, 8px) scale(0.94); }
+  to { opacity: 1; transform: none; }
+}
+
+.chip-in {
+  animation: pop 0.32s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes backdrop-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.backdrop-in {
+  animation: backdrop-in 0.28s ease both;
+}
+
+@keyframes drawer-in {
+  from { transform: translateX(100%); }
+  to { transform: none; }
+}
+
+.drawer-in {
+  animation: drawer-in 0.42s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes modal-in {
+  from { opacity: 0; transform: translateY(16px) scale(0.97); }
+  to { opacity: 1; transform: none; }
+}
+
+.modal-in {
+  animation: modal-in 0.4s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .reveal,
+  .rise,
+  .hero-photo,
+  .hero-line,
+  .hero-fade,
+  .line-draw,
+  .chip-in,
+  .drawer-in,
+  .modal-in,
+  .backdrop-in,
+  .hotspot::before {
+    animation: none !important;
+    opacity: 1 !important;
+    transform: none !important;
+    transition: none !important;
+  }
 }
