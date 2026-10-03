@@ -9,7 +9,7 @@ type CartValue = {
   items: Item[];
   open: boolean;
   setOpen: (open: boolean) => void;
-  add: (product: Product) => void;
+  add: (product: Product, qty?: number) => void;
   remove: (slug: string) => void;
   count: number;
   subtotal: number;
@@ -21,12 +21,13 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   const [items, setItems] = useState<Item[]>([]);
   const [open, setOpen] = useState(false);
 
-  function add(product: Product) {
+  function add(product: Product, qty = 1) {
+    const amount = Math.max(1, qty);
     setItems((current) => {
       const found = current.find((item) => item.product.slug === product.slug);
-      if (!found) return [...current, { product, qty: 1 }];
+      if (!found) return [...current, { product, qty: amount }];
       return current.map((item) =>
-        item.product.slug === product.slug ? { ...item, qty: item.qty + 1 } : item,
+        item.product.slug === product.slug ? { ...item, qty: item.qty + amount } : item,
       );
     });
     setOpen(true);

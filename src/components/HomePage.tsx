@@ -77,12 +77,8 @@ export function HomePage() {
         <Showcase key={panel.title} panel={panel} />
       ))}
 
-      <Ticker text="Un solo proveedor" href="/productos" action="Ver catálogo" />
-
       <section className="mx-auto max-w-[1380px] px-6 py-28">
-        <Reveal>
-          <h2 className="text-center text-5xl font-semibold tracking-tight">Por qué Symart</h2>
-        </Reveal>
+        <SectionIntro kicker="Un solo proveedor" title="Por qué Symart" action={{ href: "/productos", label: "Ver catálogo" }} />
         <div className="mt-12 grid gap-5 md:grid-cols-4">
           {reasons.map(([title, text, icon], index) => (
             <Reveal key={title} delay={index * 80}>
@@ -163,12 +159,8 @@ export function HomePage() {
         </div>
       </section>
 
-      <Ticker text="Taller en Aguascalientes" />
-
       <section className="mx-auto max-w-[1380px] px-6 py-20">
-        <Reveal>
-          <h2 className="text-center text-5xl font-semibold tracking-tight md:text-6xl">Contacto</h2>
-        </Reveal>
+        <SectionIntro kicker="Taller en Aguascalientes" title="Contacto" />
         <div className="mt-12 grid items-center gap-10 md:grid-cols-2">
           <div>
             <p className="max-w-md text-2xl font-medium leading-snug tracking-tight">
@@ -194,12 +186,8 @@ export function HomePage() {
         </div>
       </section>
 
-      <Ticker text="Proyectos" />
-
       <section className="mx-auto max-w-[1380px] px-6 py-20">
-        <Reveal>
-          <h2 className="text-center text-5xl font-semibold tracking-tight">@symartmuebles</h2>
-        </Reveal>
+        <SectionIntro kicker="Proyectos" title="@symartmuebles" />
         <div className="mt-10 grid grid-cols-2 gap-4 md:grid-cols-4">
           {["/images/desks-green.jpg", "/images/meeting.jpg", "/images/desk-wood.jpg", "/images/chair-mesh.jpg"].map((src) => (
             <div key={src} className="relative">
@@ -215,57 +203,97 @@ export function HomePage() {
 
 function Showcase({ panel }: { panel: (typeof panels)[number] }) {
   return (
-    <section className="relative h-[300vh]">
+    <section className="relative h-[110vh] overflow-clip">
       <div className="absolute inset-0">
         <ParallaxMedia src={panel.background} amount={40} className="h-full w-full" />
       </div>
-      <div className="sticky top-0 flex h-screen items-center justify-center px-5">
-        <div className="grid h-[510px] w-[min(1380px,100%)] grid-cols-1 overflow-hidden rounded-xl bg-white p-2 shadow-2xl md:grid-cols-2">
-          <div className="flex flex-col p-6 md:p-8">
-            <h3 className="text-3xl font-semibold tracking-tight">{panel.title}</h3>
-            <p className="mt-4 max-w-sm text-sm leading-relaxed text-neutral-600">{panel.text}</p>
-            <Link href={panel.href} className="mt-auto inline-flex w-fit rounded-md bg-black px-4 py-2.5 text-sm text-white">
-              Ver catálogo
-            </Link>
+      <div className="absolute inset-0 overflow-clip">
+        <div className="absolute inset-x-0 h-[300vh]" style={{ top: "calc(50% - 150vh)" }}>
+          <div className="sticky top-0 flex h-screen items-center justify-center px-5">
+            <div className="flex h-auto w-[min(1380px,100%)] flex-col overflow-hidden rounded-xl bg-white p-2 md:h-[510px] md:flex-row">
+              <div className="flex flex-col justify-between p-6 md:w-[706px] md:shrink-0">
+                <div>
+                  <h3 className="text-2xl font-semibold leading-[31.2px] tracking-[-0.96px] text-[#212121]">{panel.title}</h3>
+                  <p className="mt-4 text-base font-medium leading-6 tracking-[-0.32px] text-[#6d6d6d]">{panel.text}</p>
+                </div>
+                <Link href={panel.href} className="mt-6 inline-flex w-fit rounded-md bg-black px-[17px] py-2.5 text-base font-semibold tracking-[-0.8px] text-white">
+                  Ver catálogo
+                </Link>
+              </div>
+              <ParallaxMedia src={panel.image} amount={40} radius={10} className="h-56 w-full md:h-auto md:min-w-0 md:flex-1" />
+            </div>
           </div>
-          <ParallaxMedia src={panel.image} amount={40} radius={10} className="h-56 w-full md:h-full" />
         </div>
       </div>
     </section>
   );
 }
 
-function Ticker({ text, href, action }: { text: string; href?: string; action?: string }) {
-  const ref = useRef<HTMLDivElement>(null);
+function SectionIntro({
+  kicker,
+  title,
+  action,
+}: {
+  kicker: string;
+  title: string;
+  action?: { href: string; label: string };
+}) {
+  return (
+    <div className="mb-12 flex flex-col items-center gap-[94px]">
+      <div className="flex w-full flex-col items-center gap-5">
+        <ScrollRule />
+        <div className="flex flex-wrap items-center justify-center gap-1.5 text-sm text-[#121212]">
+          <span className="h-1.5 w-1.5 rounded-full border border-current" />
+          <span>{kicker}</span>
+          {action ? (
+            <Link href={action.href} className="ml-1 rounded-md border border-neutral-300 px-4 py-2">
+              {action.label}
+            </Link>
+          ) : null}
+        </div>
+      </div>
+      <h2 className="text-center text-[40px] font-semibold leading-[48px] tracking-[-1.2px]">{title}</h2>
+    </div>
+  );
+}
+
+function ScrollRule() {
+  const ref = useRef<HTMLSpanElement>(null);
 
   useEffect(() => {
     const node = ref.current;
     if (!node) return;
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (!entry.isIntersecting) return;
-        node.classList.add("is-in");
-        observer.disconnect();
-      },
-      { threshold: 0.6 },
-    );
-    observer.observe(node);
-    return () => observer.disconnect();
+    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    let frame = 0;
+    const update = () => {
+      frame = 0;
+      if (reduce) {
+        node.style.transform = "scaleX(1)";
+        return;
+      }
+      const rect = node.getBoundingClientRect();
+      const progress = Math.min(1, Math.max(0, (window.innerHeight - rect.top) / (window.innerHeight * 0.65)));
+      node.style.transform = `scaleX(${progress})`;
+    };
+    const onScroll = () => {
+      if (!frame) frame = window.requestAnimationFrame(update);
+    };
+    update();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", onScroll);
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("resize", onScroll);
+      if (frame) window.cancelAnimationFrame(frame);
+    };
   }, []);
 
   return (
-    <div ref={ref} className="scroll-line mx-auto flex w-full max-w-[787px] flex-col items-center gap-5 px-6 py-8">
-      <span className="line-draw block h-px w-full bg-[#c2c2c2]" />
-      <div className="flex flex-wrap items-center justify-center gap-2 text-sm text-[#121212]">
-        <span className="h-1.5 w-1.5 rounded-full border border-current" />
-        <span>{text}</span>
-        {href && action ? (
-          <Link href={href} className="ml-2 rounded-md border border-neutral-300 px-4 py-2">
-            {action}
-          </Link>
-        ) : null}
-      </div>
-    </div>
+    <span
+      ref={ref}
+      className="block h-px w-full bg-[#c2c2c2]"
+      style={{ transform: "scaleX(0)", transformOrigin: "center" }}
+    />
   );
 }
 
